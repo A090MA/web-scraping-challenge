@@ -30,18 +30,17 @@ def scrape():
     news_url = 'https://mars.nasa.gov/news/'
     browser.visit(news_url)
     news_html = browser.html
-    news_soup = bs(news_html,'lxml')
+    news_soup = bs(news_html,'html.parser')
     news_title = news_soup.find("div",class_="content_title").text
     news_para = news_soup.find("div", class_="rollover_description_inner").text
 
     # JPL Mars Space Images - Featured Image
-    jurl = 'https://spaceimages-mars.com/'
-    browser.visit(jurl)
+    featured_image_url = 'https://spaceimages-mars.com/'
+    browser.visit(featured_image_url)
     jhtml = browser.html
     jpl_soup = bs(jhtml,"html.parser")
-    image_url = jpl_soup.find('div',class_='carousel_container').article.footer.a['data-fancybox-href']
-    base_link = "https:"+jpl_soup.find('div', class_='jpl_logo').a['href'].rstrip('/')
-    feature_url = base_link+image_url
+    image_url = jpl_soup.find('a',class_='fancybox-thumbs')["href"]
+    feature_url = featured_image_url+image_url
     featured_image_title = jpl_soup.find('h1', class_="media_feature_title").text.strip()
 
 
@@ -74,14 +73,6 @@ def scrape():
             hemisphere_image_urls.append(product_dict)
 
 
-
-
-
-
-
-
-    
-
     # Close the browser after scraping
     browser.quit()
 
@@ -95,7 +86,7 @@ def scrape():
 		'fact_table': mars_fact_html,
 		'hemisphere_image_urls': hemisphere_image_urls,
         'news_url': news_url,
-        'jpl_url': jurl,
+        'jpl_url': featured_image_url,
         'fact_url': murl,
         'hemisphere_url': mhurl,
         }
